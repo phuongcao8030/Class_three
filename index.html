@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bảng Đo Lường & Thời Gian — Lớp 3</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --blue-50: #E6F1FB; --blue-100: #B5D4F4; --blue-200: #85B7EB;
+    --blue-400: #378ADD; --blue-600: #185FA5; --blue-800: #0C447C; --blue-900: #042C53;
+    --green-50: #EAF3DE; --green-100: #C0DD97; --green-200: #97C459;
+    --green-400: #639922; --green-600: #3B6D11; --green-800: #27500A; --green-900: #173404;
+    --coral-50: #FAECE7; --coral-100: #F5C4B3; --coral-200: #F0997B;
+    --coral-400: #D85A30; --coral-600: #993C1D; --coral-800: #712B13; --coral-900: #4A1B0C;
+    --purple-50: #EEEDFE; --purple-100: #CECBF6; --purple-200: #AFA9EC;
+    --purple-400: #7F77DD; --purple-600: #534AB7; --purple-800: #3C3489; --purple-900: #26215C;
+    --teal-50: #E1F5EE; --teal-100: #9FE1CB; --teal-200: #5DCAA5;
+    --teal-400: #1D9E75; --teal-600: #0F6E56; --teal-800: #085041; --teal-900: #04342C;
+    --amber-50: #FAEEDA; --amber-100: #FAC775; --amber-200: #EF9F27;
+    --amber-600: #854F0B; --amber-800: #633806; --amber-900: #412402;
+    --bg: #FFF8F0;
+    --card-radius: 16px;
+    --font-display: 'Baloo 2', cursive;
+    --font-body: 'Nunito', sans-serif;
+  }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--bg);
+    background-image:
+      radial-gradient(circle at 15% 20%, rgba(55,138,221,0.08) 0%, transparent 40%),
+      radial-gradient(circle at 85% 70%, rgba(99,153,34,0.08) 0%, transparent 40%),
+      radial-gradient(circle at 50% 50%, rgba(127,119,221,0.05) 0%, transparent 60%);
+    min-height: 100vh;
+    padding: 2rem 1rem 4rem;
+    color: #2C2C2A;
+  }
+
+  .page-title {
+    font-family: var(--font-display);
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--purple-800);
+    margin-bottom: 0.25rem;
+    letter-spacing: -0.5px;
+  }
+  .page-sub {
+    text-align: center;
+    font-size: 0.95rem;
+    color: #888780;
+    margin-bottom: 2.5rem;
+  }
+
+  .section-title {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 2rem 0 1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .wrapper { max-width: 860px; margin: 0 auto; }
+
+  /* ── BẢNG ĐO LƯỜNG ── */
+  .loai-block {
+    border-radius: var(--card-radius);
+    border: 2px solid;
+    margin-bottom: 1.25rem;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    animation: fadeUp 0.4s ease both;
+  }
+  .loai-block:nth-child(1) { animation-delay: 0.05s; }
+  .loai-block:nth-child(2) { animation-delay: 0.15s; }
+  .loai-block:nth-child(3) { animation-delay: 0.25s; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .loai-header {
+    padding: 12px 18px;
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .don-vi-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+  }
+  .don-vi-cell {
+    padding: 8px 4px;
+    text-align: center;
+    border-top: 1px solid rgba(0,0,0,0.06);
+    font-size: 13px;
+  }
+  .don-vi-cell.header { font-size: 11px; font-weight: 600; opacity: 0.65; padding: 6px 4px; border-top: none; }
+  .don-vi-cell.unit   { font-size: 15px; font-weight: 700; }
+  .don-vi-cell.num    { font-size: 12px; font-weight: 600; }
+  .don-vi-cell.hl     { border-radius: 8px; }
+
+  .arrow-row {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    padding: 3px 0;
+  }
+  .arrow-cell { text-align: center; font-size: 10px; color: #888; font-weight: 600; }
+
+  /* ── BẢNG THỜI GIAN ── */
+  .rel-block {
+    border-radius: var(--card-radius);
+    border: 2px solid;
+    margin-bottom: 1.25rem;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    animation: fadeUp 0.4s ease both;
+  }
+  .rel-row {
+    display: flex;
+    align-items: stretch;
+    border-top: 1px solid rgba(0,0,0,0.06);
+  }
+  .rel-row:first-child { border-top: none; }
+  .rel-left {
+    width: 100px; min-width: 100px;
+    padding: 11px 12px;
+    font-size: 14px; font-weight: 700;
+    display: flex; align-items: center; justify-content: flex-end;
+    border-right: 1px solid rgba(0,0,0,0.06);
+    text-align: right;
+  }
+  .rel-eq {
+    width: 32px; min-width: 32px;
+    font-size: 18px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    color: #888;
+  }
+  .rel-right {
+    flex: 1;
+    padding: 11px 12px;
+    font-size: 14px;
+    display: flex; align-items: center; flex-wrap: wrap; gap: 4px;
+  }
+  .big-num { font-size: 22px; font-weight: 800; margin-right: 3px; font-family: var(--font-display); }
+  .unit-badge {
+    display: inline-block;
+    border-radius: 7px;
+    padding: 2px 10px;
+    font-size: 13px; font-weight: 700;
+  }
+  .note-small { font-size: 11px; color: #888; margin-left: 6px; }
+
+  /* ── LỊCH THÁNG ── */
+  .months-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 7px;
+    padding: 12px 14px 6px;
+  }
+  .month-card {
+    text-align: center;
+    padding: 8px 4px;
+    border-radius: 10px;
+    transition: transform 0.15s;
+  }
+  .month-card:hover { transform: scale(1.07); }
+  .month-label { font-size: 10px; font-weight: 700; margin-bottom: 3px; }
+  .month-num   { font-size: 20px; font-weight: 800; font-family: var(--font-display); line-height: 1; }
+  .month-legend {
+    padding: 8px 14px 12px;
+    font-size: 11px;
+    color: var(--coral-600);
+    font-weight: 600;
+    display: flex; gap: 12px; flex-wrap: wrap;
+  }
+
+  /* ── MẸO NHỚ ── */
+  .meo-box {
+    background: var(--amber-50);
+    border: 2px solid var(--amber-100);
+    border-radius: var(--card-radius);
+    padding: 1rem 1.25rem;
+    margin-top: 0.5rem;
+    animation: fadeUp 0.4s ease 0.4s both;
+  }
+  .meo-title {
+    font-family: var(--font-display);
+    font-size: 1rem; font-weight: 700;
+    color: var(--amber-800);
+    margin-bottom: 8px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .meo-item {
+    font-size: 14px; color: var(--amber-600);
+    margin: 6px 0;
+    display: flex; align-items: flex-start; gap: 8px;
+    line-height: 1.5;
+  }
+
+  /* divider */
+  .divider {
+    border: none;
+    border-top: 2px dashed rgba(127,119,221,0.2);
+    margin: 2.5rem 0 1rem;
+  }
+
+  @media (max-width: 600px) {
+    .page-title { font-size: 1.5rem; }
+    .don-vi-cell { font-size: 11px; padding: 6px 2px; }
+    .don-vi-cell.unit { font-size: 12px; }
+    .months-grid { grid-template-columns: repeat(4, 1fr); }
+    .rel-left { width: 80px; min-width: 80px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <div class="page-title">📚 Bảng Đo Lường — Lớp 3</div>
+  <div class="page-sub">Bảng tổng hợp đơn vị đo dành cho học sinh tiểu học</div>
+
+  <!-- ══════════════ PHẦN 1: ĐO LƯỜNG ══════════════ -->
+  <div class="section-title" style="color:var(--blue-600)">📏 Độ dài · Diện tích · Khối lượng</div>
+
+  <!-- ĐỘ DÀI -->
+  <div class="loai-block" style="border-color:var(--blue-200); background:var(--blue-50);">
+    <div class="loai-header" style="background:var(--blue-400); color:var(--blue-50);">📐 Độ dài</div>
+    <div style="padding:8px 8px 10px;">
+      <div class="don-vi-grid">
+        <div class="don-vi-cell header" style="color:var(--blue-600)">Đơn vị 1</div>
+        <div class="don-vi-cell header" style="color:var(--blue-600)">Đơn vị 2</div>
+        <div class="don-vi-cell header" style="color:var(--blue-600)">Đơn vị 3</div>
+        <div class="don-vi-cell header" style="color:var(--blue-600)">Đơn vị 4</div>
+        <div class="don-vi-cell header" style="color:var(--blue-600)">Đơn vị 5</div>
+        <div class="don-vi-cell header" style="color:var(--blue-600)">Đơn vị 6</div>
+        <div class="don-vi-cell header" style="color:var(--blue-600)">Đơn vị 7</div>
+      </div>
+      <div class="don-vi-grid">
+        <div class="don-vi-cell unit" style="color:var(--blue-800)">km</div>
+        <div class="don-vi-cell unit" style="color:var(--blue-800)">hm</div>
+        <div class="don-vi-cell unit" style="color:var(--blue-800)">dam</div>
+        <div class="don-vi-cell unit hl" style="color:var(--blue-900); background:var(--blue-100)">m</div>
+        <div class="don-vi-cell unit" style="color:var(--blue-800)">dm</div>
+        <div class="don-vi-cell unit" style="color:var(--blue-800)">cm</div>
+        <div class="don-vi-cell unit" style="color:var(--blue-800)">mm</div>
+      </div>
+      <div class="arrow-row">
+        <div class="arrow-cell"></div>
+        <div class="arrow-cell">←×10</div><div class="arrow-cell">←×10</div>
+        <div class="arrow-cell">←×10</div><div class="arrow-cell">←×10</div>
+        <div class="arrow-cell">←×10</div><div class="arrow-cell">←×10</div>
+      </div>
+      <div class="don-vi-grid">
+        <div class="don-vi-cell num" style="color:var(--blue-600)">1</div>
+        <div class="don-vi-cell num" style="color:var(--blue-600)">10</div>
+        <div class="don-vi-cell num" style="color:var(--blue-600)">100</div>
+        <div class="don-vi-cell num hl" style="color:var(--blue-900); background:var(--blue-100)">1.000</div>
+        <div class="don-vi-cell num" style="color:var(--blue-600)">10.000</div>
+        <div class="don-vi-cell num" style="color:var(--blue-600)">100.000</div>
+        <div class="don-vi-cell num" style="color:var(--blue-600)">1.000.000</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DIỆN TÍCH -->
+  <div class="loai-block" style="border-color:var(--green-200); background:var(--green-50);">
+    <div class="loai-header" style="background:var(--green-400); color:var(--green-50);">🗺️ Diện tích</div>
+    <div style="padding:8px 8px 10px;">
+      <div class="don-vi-grid">
+        <div class="don-vi-cell header" style="color:var(--green-600)">Đơn vị 1</div>
+        <div class="don-vi-cell header" style="color:var(--green-600)">Đơn vị 2</div>
+        <div class="don-vi-cell header" style="color:var(--green-600)">Đơn vị 3</div>
+        <div class="don-vi-cell header" style="color:var(--green-600)">Đơn vị 4</div>
+        <div class="don-vi-cell header" style="color:var(--green-600)">Đơn vị 5</div>
+        <div class="don-vi-cell header" style="color:var(--green-600)">Đơn vị 6</div>
+        <div class="don-vi-cell header" style="color:var(--green-600)">Đơn vị 7</div>
+      </div>
+      <div class="don-vi-grid">
+        <div class="don-vi-cell unit" style="color:var(--green-800)">km²</div>
+        <div class="don-vi-cell unit" style="color:var(--green-800)">hm²</div>
+        <div class="don-vi-cell unit" style="color:var(--green-800)">dam²</div>
+        <div class="don-vi-cell unit hl" style="color:var(--green-900); background:var(--green-100)">m²</div>
+        <div class="don-vi-cell unit" style="color:var(--green-800)">dm²</div>
+        <div class="don-vi-cell unit" style="color:var(--green-800)">cm²</div>
+        <div class="don-vi-cell unit" style="color:var(--green-800)">mm²</div>
+      </div>
+      <div class="arrow-row">
+        <div class="arrow-cell"></div>
+        <div class="arrow-cell">←×100</div><div class="arrow-cell">←×100</div>
+        <div class="arrow-cell">←×100</div><div class="arrow-cell">←×100</div>
+        <div class="arrow-cell">←×100</div><div class="arrow-cell">←×100</div>
+      </div>
+      <div class="don-vi-grid">
+        <div class="don-vi-cell num" style="color:var(--green-600)">1</div>
+        <div class="don-vi-cell num" style="color:var(--green-600)">100</div>
+        <div class="don-vi-cell num" style="color:var(--green-600)">10.000</div>
+        <div class="don-vi-cell num hl" style="color:var(--green-900); background:var(--green-100)">1.000.000</div>
+        <div class="don-vi-cell num" style="color:var(--green-600); font-size:10px">100.000.000</div>
+        <div class="don-vi-cell num" style="color:var(--green-600); font-size:9px">10.000.000.000</div>
+        <div class="don-vi-cell num" style="color:var(--green-600); font-size:8px">1.000.000.000.000</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KHỐI LƯỢNG -->
+  <div class="loai-block" style="border-color:var(--coral-200); background:var(--coral-50);">
+    <div class="loai-header" style="background:var(--coral-400); color:var(--coral-50);">⚖️ Khối lượng</div>
+    <div style="padding:8px 8px 10px;">
+      <div class="don-vi-grid">
+        <div class="don-vi-cell header" style="color:var(--coral-600)">Đơn vị 1</div>
+        <div class="don-vi-cell header" style="color:var(--coral-600)">Đơn vị 2</div>
+        <div class="don-vi-cell header" style="color:var(--coral-600)">Đơn vị 3</div>
+        <div class="don-vi-cell header" style="color:var(--coral-600)">Đơn vị 4</div>
+        <div class="don-vi-cell header" style="color:var(--coral-600)">Đơn vị 5</div>
+        <div class="don-vi-cell header" style="color:var(--coral-600)">Đơn vị 6</div>
+        <div class="don-vi-cell header" style="color:var(--coral-600)">Đơn vị 7</div>
+      </div>
+      <div class="don-vi-grid">
+        <div class="don-vi-cell unit" style="color:var(--coral-800)">tấn</div>
+        <div class="don-vi-cell unit" style="color:var(--coral-800)">tạ</div>
+        <div class="don-vi-cell unit" style="color:var(--coral-800)">yến</div>
+        <div class="don-vi-cell unit hl" style="color:var(--coral-900); background:var(--coral-100)">kg</div>
+        <div class="don-vi-cell unit" style="color:var(--coral-800)">hg</div>
+        <div class="don-vi-cell unit" style="color:var(--coral-800)">dag</div>
+        <div class="don-vi-cell unit" style="color:var(--coral-800)">gam</div>
+      </div>
+      <div class="arrow-row">
+        <div class="arrow-cell"></div>
+        <div class="arrow-cell">←×10</div><div class="arrow-cell">←×10</div>
+        <div class="arrow-cell">←×10</div><div class="arrow-cell">←×10</div>
+        <div class="arrow-cell">←×10</div><div class="arrow-cell">←×10</div>
+      </div>
+      <div class="don-vi-grid">
+        <div class="don-vi-cell num" style="color:var(--coral-600)">1</div>
+        <div class="don-vi-cell num" style="color:var(--coral-600)">10</div>
+        <div class="don-vi-cell num" style="color:var(--coral-600)">100</div>
+        <div class="don-vi-cell num hl" style="color:var(--coral-900); background:var(--coral-100)">1.000</div>
+        <div class="don-vi-cell num" style="color:var(--coral-600)">10.000</div>
+        <div class="don-vi-cell num" style="color:var(--coral-600)">100.000</div>
+        <div class="don-vi-cell num" style="color:var(--coral-600)">1.000.000</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="meo-box">
+    <div class="meo-title">💡 Mẹo nhớ nhanh</div>
+    <div class="meo-item"><span>📏</span><span><strong>Độ dài + Khối lượng:</strong> sang phải ÷10, sang trái ×10 (mỗi ô)</span></div>
+    <div class="meo-item"><span>🗺️</span><span><strong>Diện tích:</strong> sang phải ÷100, sang trái ×100 (mỗi ô)</span></div>
+    <div class="meo-item"><span>⭐</span><span>Ô <strong>nền đậm</strong> là đơn vị hay dùng nhất nhé!</span></div>
+  </div>
+
+  <!-- ══════════════ PHẦN 2: THỜI GIAN ══════════════ -->
+  <hr class="divider">
+  <div class="section-title" style="color:var(--purple-600)">⏰ Đơn vị Thời Gian</div>
+
+  <!-- GIỜ PHÚT GIÂY -->
+  <div class="rel-block" style="border-color:var(--purple-200); background:var(--purple-50);">
+    <div class="loai-header" style="background:var(--purple-400); color:var(--purple-50);">🕐 Giờ · Phút · Giây</div>
+    <div style="padding:6px 14px 10px;">
+      <div class="rel-row">
+        <div class="rel-left" style="color:var(--purple-800)"><span class="big-num" style="color:var(--purple-900)">1</span> giờ</div>
+        <div class="rel-eq">=</div>
+        <div class="rel-right"><span class="big-num" style="color:var(--purple-900)">60</span><span class="unit-badge" style="background:var(--purple-100); color:var(--purple-800)">phút</span></div>
+      </div>
+      <div class="rel-row">
+        <div class="rel-left" style="color:var(--purple-800)"><span class="big-num" style="color:var(--purple-900)">1</span> phút</div>
+        <div class="rel-eq">=</div>
+        <div class="rel-right"><span class="big-num" style="color:var(--purple-900)">60</span><span class="unit-badge" style="background:var(--purple-100); color:var(--purple-800)">giây</span></div>
+      </div>
+      <div class="rel-row">
+        <div class="rel-left" style="color:var(--purple-800)"><span class="big-num" style="color:var(--purple-900)">1</span> giờ</div>
+        <div class="rel-eq">=</div>
+        <div class="rel-right"><span class="big-num" style="color:var(--purple-900)">3.600</span><span class="unit-badge" style="background:var(--purple-100); color:var(--purple-800)">giây</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NGÀY TUẦN THÁNG NĂM -->
+  <div class="rel-block" style="border-color:var(--teal-200); background:var(--teal-50);">
+    <div class="loai-header" style="background:var(--teal-400); color:var(--teal-50);">📅 Ngày · Tuần · Tháng · Năm</div>
+    <div style="padding:6px 14px 10px;">
+      <div class="rel-row">
+        <div class="rel-left" style="color:var(--teal-800)"><span class="big-num" style="color:var(--teal-900)">1</span> tuần</div>
+        <div class="rel-eq">=</div>
+        <div class="rel-right"><span class="big-num" style="color:var(--teal-900)">7</span><span class="unit-badge" style="background:var(--teal-100); color:var(--teal-800)">ngày</span></div>
+      </div>
+      <div class="rel-row">
+        <div class="rel-left" style="color:var(--teal-800)"><span class="big-num" style="color:var(--teal-900)">1</span> tháng</div>
+        <div class="rel-eq">=</div>
+        <div class="rel-right"><span class="big-num" style="color:var(--teal-900)">28</span><span class="note-small">/ 29 / 30 / 31</span><span class="unit-badge" style="background:var(--teal-100); color:var(--teal-800)">ngày</span></div>
+      </div>
+      <div class="rel-row">
+        <div class="rel-left" style="color:var(--teal-800)"><span class="big-num" style="color:var(--teal-900)">1</span> năm</div>
+        <div class="rel-eq">=</div>
+        <div class="rel-right"><span class="big-num" style="color:var(--teal-900)">12</span><span class="unit-badge" style="background:var(--teal-100); color:var(--teal-800)">tháng</span></div>
+      </div>
+      <div class="rel-row">
+        <div class="rel-left" style="color:var(--teal-800)"><span class="big-num" style="color:var(--teal-900)">1</span> năm</div>
+        <div class="rel-eq">=</div>
+        <div class="rel-right"><span class="big-num" style="color:var(--teal-900)">365</span><span class="unit-badge" style="background:var(--teal-100); color:var(--teal-800)">ngày</span><span class="note-small">(năm nhuận: 366 ngày)</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LỊCH 12 THÁNG -->
+  <div class="rel-block" style="border-color:var(--coral-200); background:var(--coral-50);">
+    <div class="loai-header" style="background:var(--coral-400); color:var(--coral-50);">🗓️ Số ngày trong từng tháng</div>
+    <div class="months-grid">
+      <div class="month-card" style="background:var(--coral-100)">
+        <div class="month-label" style="color:var(--coral-800)">Tháng 1</div>
+        <div class="month-num" style="color:var(--coral-900)">31</div>
+      </div>
+      <div class="month-card" style="background:var(--amber-50); border:2px solid var(--amber-100)">
+        <div class="month-label" style="color:var(--amber-600)">Tháng 2</div>
+        <div class="month-num" style="color:var(--amber-900)">28<sup style="font-size:10px">*</sup></div>
+      </div>
+      <div class="month-card" style="background:var(--coral-100)">
+        <div class="month-label" style="color:var(--coral-800)">Tháng 3</div>
+        <div class="month-num" style="color:var(--coral-900)">31</div>
+      </div>
+      <div class="month-card" style="background:var(--coral-50); border:1.5px solid var(--coral-200)">
+        <div class="month-label" style="color:var(--coral-600)">Tháng 4</div>
+        <div class="month-num" style="color:var(--coral-900)">30</div>
+      </div>
+      <div class="month-card" style="background:var(--coral-100)">
+        <div class="month-label" style="color:var(--coral-800)">Tháng 5</div>
+        <div class="month-num" style="color:var(--coral-900)">31</div>
+      </div>
+      <div class="month-card" style="background:var(--coral-50); border:1.5px solid var(--coral-200)">
+        <div class="month-label" style="color:var(--coral-600)">Tháng 6</div>
+        <div class="month-num" style="color:var(--coral-900)">30</div>
+      </div>
+      <div class="month-card" style="background:var(--coral-100)">
+        <div class="month-label" style="color:var(--coral-800)">Tháng 7</div>
+        <div class="month-num" style="color:var(--coral-900)">31</div>
+      </div>
+      <div class="month-card" style="background:var(--coral-100)">
+        <div class="month-label" style="color:var(--coral-800)">Tháng 8</div>
+        <div class="month-num" style="color:var(--coral-900)">31</div>
+      </div>
+      <div class="month-card" style="background:var(--coral-50); border:1.5px solid var(--coral-200)">
+        <div class="month-label" style="color:var(--coral-600)">Tháng 9</div>
+        <div class="month-num" style="color:var(--coral-900)">30</div>
+      </div>
+      <div class="month-card" style="background:var(--coral-100)">
+        <div class="month-label" style="color:var(--coral-800)">Tháng 10</div>
+        <div class="month-num" style="color:var(--coral-900)">31</div>
+      </div>
+      <div class="month-card" style="background:var(--coral-50); border:1.5px solid var(--coral-200)">
+        <div class="month-label" style="color:var(--coral-600)">Tháng 11</div>
+        <div class="month-num" style="color:var(--coral-900)">30</div>
+      </div>
+      <div class="month-card" style="background:var(--coral-100)">
+        <div class="month-label" style="color:var(--coral-800)">Tháng 12</div>
+        <div class="month-num" style="color:var(--coral-900)">31</div>
+      </div>
+    </div>
+    <div class="month-legend">
+      <span>🟥 Nền đậm = 31 ngày</span>
+      <span>⬜ Viền mỏng = 30 ngày</span>
+      <span>⭐ Tháng 2* = 28 ngày (năm nhuận: 29 ngày)</span>
+    </div>
+  </div>
+
+  <div class="meo-box">
+    <div class="meo-title">💡 Mẹo nhớ nhanh</div>
+    <div class="meo-item"><span>🕐</span><span>1 giờ = <strong>60 phút</strong>, 1 phút = <strong>60 giây</strong> — nhớ số <strong>60</strong> là xong!</span></div>
+    <div class="meo-item"><span>✊</span><span><strong>Mẹo nắm tay:</strong> các đốt tay nhô lên = 31 ngày, rãnh lõm xuống = 30 ngày (hoặc 28/29 với tháng 2)</span></div>
+    <div class="meo-item"><span>📅</span><span>Tháng 2 ngắn nhất — chỉ <strong>28 ngày</strong>, năm nhuận có <strong>29 ngày</strong></span></div>
+  </div>
+
+  <div style="text-align:center; margin-top:2.5rem; font-size:12px; color:#aaa; font-family:var(--font-body);">
+    ✨ Học tốt nhé! ✨
+  </div>
+
+</div>
+</body>
+</html>
