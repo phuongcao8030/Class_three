@@ -1,0 +1,1600 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bài kiểm tra tiếng Anh — Nối hình và từ</title>
+  <style>
+    :root {
+      --bg: #f0f4f8;
+      --card: #ffffff;
+      --text: #1a2b3c;
+      --muted: #5a6f7f;
+      --accent: #2563eb;
+      --accent-soft: #dbeafe;
+      --line: #2563eb;
+      --selected: #f59e0b;
+      --slot: #e8eef4;
+      --border: #cbd5e1;
+      --radius: 12px;
+      --font: "Segoe UI", system-ui, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .page-container {
+      width: 100%;
+      min-height: 100vh;
+      padding: clamp(16px, 4vw, 32px) clamp(12px, 3vw, 24px) 48px;
+    }
+
+    .page {
+      max-width: 960px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    header {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+
+    header h1 {
+      margin: 0 0 8px;
+      font-size: 1.35rem;
+      font-weight: 700;
+    }
+
+    header p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .question {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 20px 24px 28px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+
+    .question-title {
+      font-weight: 700;
+      margin-bottom: 16px;
+      font-size: 1.05rem;
+    }
+
+    .hint {
+      font-size: 0.9rem;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    .match-wrap {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 48px;
+      align-items: start;
+      min-height: 320px;
+    }
+
+    @media (max-width: 600px) {
+      .match-wrap {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+    }
+
+    .match-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      overflow: visible;
+    }
+
+    .col-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .col-images,
+    .col-words {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .image-row,
+    .word-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .image-row .num,
+    .word-row .num {
+      flex-shrink: 0;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 0.8rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .image-slot {
+      flex: 0 0 auto;
+      position: relative;
+      width: 100px;
+      height: 100px;
+      border: 2px dashed var(--border);
+      border-radius: 10px;
+      background: var(--slot);
+      overflow: hidden;
+      cursor: pointer;
+      transition: box-shadow 0.15s, border-color 0.15s, transform 0.1s;
+    }
+
+    .image-slot:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-soft);
+    }
+
+    .image-slot.selected {
+      border-color: var(--selected);
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.35);
+    }
+
+    .image-slot img {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center;
+    }
+
+    .image-slot img[src=""],
+    .image-slot img:not([src]) {
+      display: none;
+    }
+
+    .image-slot::after {
+      content: "Thêm src ảnh";
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+      font-size: 0.62rem;
+      line-height: 1.2;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .image-slot:has(img[src]:not([src=""]))::after {
+      display: none;
+    }
+
+    .word-btn {
+      flex: 1;
+      text-align: left;
+      padding: 14px 16px;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      background: var(--card);
+      font: inherit;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      transition: box-shadow 0.15s, border-color 0.15s;
+    }
+
+    .word-btn:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-soft);
+    }
+
+    .word-btn.selected {
+      border-color: var(--selected);
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.35);
+    }
+
+    .toolbar {
+      margin-top: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .toolbar button {
+      padding: 10px 16px;
+      border-radius: 8px;
+      border: none;
+      font: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .toolbar button.secondary {
+      background: var(--slot);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .toolbar button.success {
+      background: #16a34a;
+      color: #fff;
+    }
+
+    .match-result {
+      display: none;
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-radius: 10px;
+      border: 2px solid var(--border);
+      font-size: 0.95rem;
+    }
+
+    .match-result.is-visible {
+      display: block;
+    }
+
+    .match-result.is-error {
+      border-color: #dc2626;
+      background: #fef2f2;
+      color: #7f1d1d;
+    }
+
+    .match-result.is-success {
+      border-color: #16a34a;
+      background: #f0fdf4;
+      color: #14532d;
+    }
+
+    .match-result h4 {
+      margin: 0 0 10px;
+      font-size: 1rem;
+    }
+
+    .match-result ul {
+      margin: 0;
+      padding-left: 1.2em;
+    }
+
+    .match-result li {
+      margin-bottom: 6px;
+    }
+
+    #fireworksCanvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    .page .question + .question {
+      margin-top: 24px;
+    }
+
+    .q2-item {
+      margin-bottom: 28px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .q2-item:last-of-type {
+      margin-bottom: 0;
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+
+    .q2-label {
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 10px;
+      color: var(--text);
+    }
+
+    .q2-image-frame {
+      position: relative;
+      max-width: 400px;
+      margin: 0 auto;
+      aspect-ratio: 16 / 10;
+      min-height: 140px;
+      border: 2px dashed var(--border);
+      border-radius: 10px;
+      background: var(--slot);
+      overflow: hidden;
+    }
+
+    .q2-image-frame img {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center;
+    }
+
+    .q2-image-frame img[src=""],
+    .q2-image-frame img:not([src]) {
+      display: none;
+    }
+
+    .q2-image-frame::after {
+      content: "Thêm URL ảnh (src)";
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .q2-image-frame:has(img[src]:not([src=""]))::after {
+      display: none;
+    }
+
+    .q2-options {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 14px;
+      max-width: 520px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .q2-choice {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      line-height: 1.4;
+    }
+
+    .q2-choice span {
+      font: inherit;
+      color: var(--text);
+    }
+
+    .q4-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      font-size: 0.95rem;
+    }
+
+    .q4-table th,
+    .q4-table td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      vertical-align: middle;
+    }
+
+    .q4-table th {
+      background: var(--slot);
+      color: var(--text);
+      text-align: left;
+      font-weight: 700;
+    }
+
+    .q4-image-frame {
+      position: relative;
+      width: 100%;
+      min-height: 120px;
+      border: 2px dashed var(--border);
+      border-radius: 10px;
+      background: var(--bg);
+      overflow: hidden;
+    }
+
+    .q4-image-frame img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center;
+      display: block;
+    }
+
+    .q4-input,
+    .q5-input,
+    .q6-input {
+      width: 100%;
+      padding: 12px 14px;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      font: inherit;
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: var(--text);
+      background: var(--card);
+    }
+
+    .q5-words {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .q3-options {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .q3-statement {
+      margin-top: 8px;
+      line-height: 1.4;
+      color: var(--text);
+    }
+
+    .q5-word {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 10px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--card);
+      color: var(--text);
+      font: inherit;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 520px) {
+      .q2-options {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .q2-opt {
+      padding: 12px 10px;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      background: var(--card);
+      font: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      text-align: center;
+      transition: box-shadow 0.15s, border-color 0.15s;
+    }
+
+    .q2-opt:hover {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-soft);
+    }
+
+    .q2-opt.is-picked {
+      border-color: #16a34a;
+      background: #16a34a;
+      color: #fff;
+      box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.35);
+    }
+
+    .q2-opt.is-picked:hover {
+      border-color: #15803d;
+      background: #15803d;
+      box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.4);
+    }
+  </style>
+</head>
+<body>
+  <div class="page-container">
+    <div class="page">
+    <header>
+      <h1>Bài kiểm tra tiếng Anh</h1>
+      <p>Họ tên: _________________ Lớp: _______ Thời gian: 15 phút</p>
+    </header>
+
+    <section class="question" aria-labelledby="q1-title">
+      <div class="question-title" id="q1-title">Question 1: Read and draw lines.</div>
+      <p class="hint">Chọn một ô hình, sau đó chọn một từ (hoặc ngược lại) để vẽ đường thẳng nối chúng. Mỗi hình và mỗi từ chỉ nối một lần; nối lại sẽ thay thế đường cũ.</p>
+
+      <div class="match-wrap" id="matchArea">
+        <svg class="match-svg" id="lineLayer" aria-hidden="true"></svg>
+
+        <div>
+          <div class="col-label">Hình</div>
+          <div class="col-images" id="colImages">
+            <div class="image-row">
+              <span class="num">1</span>
+              <div class="image-slot" data-kind="image" data-id="1" role="button" tabindex="0" aria-label="Hình 1">
+                <img src="https://tomau.vn/wp-content/uploads/2020/09/quả-táo.jpg" alt="Hình 1" />
+              </div>
+            </div>
+            <div class="image-row">
+              <span class="num">2</span>
+              <div class="image-slot" data-kind="image" data-id="2" role="button" tabindex="0" aria-label="Hình 2">
+                <img src="https://tomau.vn/wp-content/uploads/tranh-to-mau-cai-bat-mi.jpg" alt="Hình 2" />
+              </div>
+            </div>
+            <div class="image-row">
+              <span class="num">3</span>
+              <div class="image-slot" data-kind="image" data-id="3" role="button" tabindex="0" aria-label="Hình 3">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTlxAjIrgiSJPHj77r2Efg0FOx3ydjZNLSLKw&s" alt="Hình 3" />
+              </div>
+            </div>
+            <div class="image-row">
+              <span class="num">4</span>
+              <div class="image-slot" data-kind="image" data-id="4" role="button" tabindex="0" aria-label="Hình 4">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSk0ACAqYgy0cbWwNFSRsjwHq49B79cBKF_3Q&s" alt="Hình 4" />
+              </div>
+            </div>
+            <div class="image-row">
+              <span class="num">5</span>
+              <div class="image-slot" data-kind="image" data-id="5" role="button" tabindex="0" aria-label="Hình 5">
+                <img src="https://tomau.vn/wp-content/uploads/củ-cà-rốt.png" alt="Hình 5" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="col-label">Từ tiếng Anh</div>
+          <div class="col-words" id="colWords">
+            <div class="word-row">
+              <span class="num">A</span>
+              <button type="button" class="word-btn" data-kind="word" data-id="a">apple</button>
+            </div>
+            <div class="word-row">
+              <span class="num">B</span>
+              <button type="button" class="word-btn" data-kind="word" data-id="b">carrot</button>
+            </div>
+            <div class="word-row">
+              <span class="num">C</span>
+              <button type="button" class="word-btn" data-kind="word" data-id="c">tomato</button>
+            </div>
+            <div class="word-row">
+              <span class="num">D</span>
+              <button type="button" class="word-btn" data-kind="word" data-id="d">noodles</button>
+            </div>
+            <div class="word-row">
+              <span class="num">E</span>
+              <button type="button" class="word-btn" data-kind="word" data-id="e">fish</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <button type="button" class="success" id="btnCheck">Kiểm tra Question 1</button>
+        <button type="button" id="btnClear">Xóa tất cả đường nối</button>
+        <button type="button" class="secondary" id="btnRedraw">Vẽ lại đường (sau khi đổi kích thước cửa sổ)</button>
+      </div>
+
+      <div id="matchResult" class="match-result" role="status" aria-live="polite"></div>
+    </section>
+
+    <section class="question" aria-labelledby="q2-title">
+      <div class="question-title" id="q2-title">Question 2: Chọn một đáp án đúng (A–D) cho mỗi hình.</div>
+      <p class="hint">Mỗi câu có một hình phía trên và bốn lựa chọn phía dưới. Chọn xong bấm <strong>Kiểm tra câu 2</strong>.</p>
+
+      <div id="q2Block">
+        <div class="q2-item">
+          <div class="q2-label">Câu 0</div>
+          <div class="q2-image-frame">
+            <img src="https://4.bp.blogspot.com/-K7M9ySRodI8/Xo1YCl2oDKI/AAAAAAAAD3M/Z7o4_S-sLh0X21e0g2C70FBrmXlPPjuIwCLcBGAsYHQ/s1600/hinh-to-mau-qua-chuoi-cho-be-hai-tuoi.jpg" alt="Câu 0" />
+          </div>
+          <div class="q2-options" role="group" aria-label="Đáp án câu 0">
+            <div class="q2-choice"><button type="button" class="q2-opt" data-q="0" data-choice="a">A</button><span>There is a donut.</span></div>
+            <div class="q2-choice"><button type="button" class="q2-opt" data-q="0" data-choice="b">B</button><span>There is a cake.</span></div>
+            <div class="q2-choice"><button type="button" class="q2-opt" data-q="0" data-choice="c">C</button><span>There is a banana.</span></div>
+          </div>
+        </div>
+
+        <div class="q2-item">
+          <div class="q2-label">Câu 1</div>
+          <div class="q2-image-frame">
+            <img src="https://png.pngtree.com/png-clipart/20190921/original/pngtree-square-stereo-dice-illustration-png-image_4693587.jpg" alt="Câu 1" />
+          </div>
+          <div class="q2-options" role="group" aria-label="Đáp án câu 1">
+            <div class="q2-choice"><button type="button" class="q2-opt" data-q="1" data-choice="a">A</button><span>There is a dice.</span></div>
+            <div class="q2-choice"><button type="button" class="q2-opt" data-q="1" data-choice="b">B</button><span>There is a marble.</span></div>
+            <div class="q2-choice"><button type="button" class="q2-opt" data-q="1" data-choice="c">C</button><span>There is a block.</span></div>
+          </div>
+        </div>
+
+        <div class="q2-item">
+          <div class="q2-label">Câu 2</div>
+          <div class="q2-image-frame">
+            <img src="https://shutterphoto.net/wp-content/uploads/2021/10/188-Giang-sinh-tranh-to-mau-noel-5-30.jpg" alt="Câu 2" />
+          </div>
+          <div class="q2-options" role="group" aria-label="Đáp án câu 2">
+            <div class="q2-choice"><button type="button" class="q2-opt" data-q="2" data-choice="a">A</button><span>I want some socks.</span></div>
+            <div class="q2-choice"><button type="button" class="q2-opt" data-q="2" data-choice="b">B</button><span>I want some shorts.</span></div>
+            <div class="q2-choice"><button type="button" class="q2-opt" data-q="2" data-choice="c">C</button><span>I want some pants.</span></div>
+          </div>
+        </div>
+
+        <div class="q2-item">
+          <div class="q2-label">Câu 3</div>
+          <div class="q2-image-frame">
+            <img src="https://tomau.vn/wp-content/uploads/tranh-to-mau-banh-cupcake-don-gian.jpg" alt="Câu 3" />
+          </div>
+          <div class="q2-options" role="group" aria-label="Đáp án câu 3">
+            <div class="q2-choice"><button type="button" class="q2-opt" data-q="3" data-choice="a">A</button><span>There are two potatoes.</span></div>
+            <div class="q2-choice"><button type="button" class="q2-opt" data-q="3" data-choice="b">B</button><span>There are two cupcakes.</span></div>
+            <div class="q2-choice"><button type="button" class="q2-opt" data-q="3" data-choice="c">C</button><span>There are two limes.</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <button type="button" class="success" id="btnCheckQ2">Kiểm tra Question 2</button>
+      </div>
+
+      <div id="q2Result" class="match-result" role="status" aria-live="polite"></div>
+    </section>
+
+    <section class="question" aria-labelledby="q3-title">
+      <div class="question-title" id="q3-title">Question 3: Look, read and tick (YES or NO).</div>
+      <p class="hint">Với đoạn văn trên, chọn Yes hoặc No cho mỗi câu.</p>
+      <p>My name is Julia. I'm from the USA. In my house, we often eat chicken. My favorite food is steak. We eat with
+        a knife and fork. We eat with some dishes with a fork.</p>
+      </p>
+
+      <div id="q3Block">
+        <div class="q3-item">
+          <div class="q2-label">Câu 0</div>
+          <div class="q3-statement">Julia is from the USA.</div>
+          <div class="q3-options" role="group" aria-label="Đáp án câu 0">
+            <button type="button" class="q2-opt q3-opt" data-q="0" data-answer="yes">YES</button>
+            <button type="button" class="q2-opt q3-opt" data-q="0" data-answer="no">NO</button>
+          </div>
+        </div>
+
+        <div class="q3-item">
+          <div class="q2-label">Câu 1</div>
+          <div class="q3-statement">She and her family often eat steak.</div>
+          <div class="q3-options" role="group" aria-label="Đáp án câu 1">
+            <button type="button" class="q2-opt q3-opt" data-q="1" data-answer="yes">YES</button>
+            <button type="button" class="q2-opt q3-opt" data-q="1" data-answer="no">NO</button>
+          </div>
+        </div>
+
+        <div class="q3-item">
+          <div class="q2-label">Câu 2</div>
+          <div class="q3-statement">Her favorite food is chicken.</div>
+          <div class="q3-options" role="group" aria-label="Đáp án câu 2">
+            <button type="button" class="q2-opt q3-opt" data-q="2" data-answer="yes">YES</button>
+            <button type="button" class="q2-opt q3-opt" data-q="2" data-answer="no">NO</button>
+          </div>
+        </div>
+
+        <div class="q3-item">
+          <div class="q2-label">Câu 3</div>
+          <div class="q3-statement">They eat with a knife and fork.</div>
+          <div class="q3-options" role="group" aria-label="Đáp án câu 3">
+            <button type="button" class="q2-opt q3-opt" data-q="3" data-answer="yes">YES</button>
+            <button type="button" class="q2-opt q3-opt" data-q="3" data-answer="no">NO</button>
+          </div>
+        </div>
+
+        <div class="q3-item">
+          <div class="q2-label">Câu 4</div>
+          <div class="q3-statement">They eat some dishes a fork.</div>
+          <div class="q3-options" role="group" aria-label="Đáp án câu 4">
+            <button type="button" class="q2-opt q3-opt" data-q="4" data-answer="yes">YES</button>
+            <button type="button" class="q2-opt q3-opt" data-q="4" data-answer="no">NO</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <button type="button" class="success" id="btnCheckQ3">Kiểm tra Question 3</button>
+      </div>
+
+      <div id="q3Result" class="match-result" role="status" aria-live="polite"></div>
+    </section>
+
+    <section class="question" aria-labelledby="q4-title">
+      <div class="question-title" id="q4-title">Question 4: Điền từ vào ô trống.</div>
+      <p class="hint">Mỗi câu có một hình và một từ bị đảo chữ. Hãy điền đúng từ vào ô bên phải.</p>
+
+      <table class="q4-table" id="q4Block" aria-label="Question 4">
+        <thead>
+          <tr>
+            <th>Hình</th>
+            <th>Từ bị đảo</th>
+            <th>Điền từ</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="q4-image-frame"><img src="https://cdn.supercoloring.com/coloring/1491849/onion-5-coloring-page-sm.webp" alt="Câu 0" /></div>
+            </td>
+            <td>niono</td>
+            <td><input type="text" class="q4-input" data-q="0" autocomplete="off" /></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="q4-image-frame"><img src="https://cdn.supercoloring.com/coloring/1497256/roast-chicken-coloring-page-original.png" alt="Câu 1" /></div>
+            </td>
+            <td>ihcckne</td>
+            <td><input type="text" class="q4-input" data-q="1" autocomplete="off" /></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="q4-image-frame"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQiHZa3UGwA9ytx7xjd1RfpvuHM7OGcYDssHA&s" alt="Câu 2" /></div>
+            </td>
+            <td>btoso</td>
+            <td><input type="text" class="q4-input" data-q="2" autocomplete="off" /></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="q4-image-frame"><img src="https://tomau.vn/wp-content/uploads/tranh-to-mau-khoai-tay-chien-dang-yeu.jpg" alt="Câu 3" /></div>
+            </td>
+            <td>efsir</td>
+            <td><input type="text" class="q4-input" data-q="3" autocomplete="off" /></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="toolbar">
+        <button type="button" class="success" id="btnCheckQ4">Kiểm tra Question 4</button>
+      </div>
+
+      <div id="q4Result" class="match-result" role="status" aria-live="polite"></div>
+    </section>
+
+    <section class="question" aria-labelledby="q5-title">
+      <div class="question-title" id="q5-title">Question 5: Reorder the words to make a correct sentence.</div>
+      <p class="hint">Ví dụ câu 0 đã đúng. Hãy viết lại các câu còn lại theo đúng trật tự.</p>
+
+      <table class="q4-table q5-table" id="q5Block" aria-label="Question 5">
+        <thead>
+          <tr>
+            <th>Câu</th>
+            <th>Từ được đảo</th>
+            <th>Viết lại</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>0</td>
+            <td>
+              <div class="q5-words">
+                <span class="q5-word">want</span>
+                <span class="q5-word">I</span>
+                <span class="q5-word">a</span>
+                <span class="q5-word">shirt.</span>
+              </div>
+            </td>
+            <td><input type="text" class="q5-input" data-q="0" value="I want a shirt." disabled /></td>
+          </tr>
+          <tr>
+            <td>1</td>
+            <td>
+              <div class="q5-words">
+                <span class="q5-word">the</span>
+                <span class="q5-word">car</span>
+                <span class="q5-word">Put</span>
+                <span class="q5-word">table.</span>
+                <span class="q5-word">under</span>
+                <span class="q5-word">the</span>
+              </div>
+            </td>
+            <td><input type="text" class="q5-input" data-q="1" autocomplete="off" /></td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>
+              <div class="q5-words">
+                <span class="q5-word">potatoes?</span>
+                <span class="q5-word">are</span>
+                <span class="q5-word">any</span>
+                <span class="q5-word">there</span>
+              </div>
+            </td>
+            <td><input type="text" class="q5-input" data-q="2" autocomplete="off" /></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="toolbar">
+        <button type="button" class="success" id="btnCheckQ5">Kiểm tra Question 5</button>
+      </div>
+
+      <div id="q5Result" class="match-result" role="status" aria-live="polite"></div>
+    </section>
+
+    <section class="question" aria-labelledby="q6-title">
+      <div class="question-title" id="q6-title">Question 6: Complete the sentences with the correct word.</div>
+      <p class="hint">Nhìn hình và điền từ phù hợp vào chỗ trống.</p>
+
+      <table class="q4-table q6-table" id="q6Block" aria-label="Question 6">
+        <thead>
+          <tr>
+            <th>Câu</th>
+            <th>Hình</th>
+            <th>Hoàn thành câu</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>0</td>
+            <td>
+              <div class="q4-image-frame"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSnMtKwyLXsMjxPJBdWGB4Ln5dBxyiTi2Bubg&s" alt="Câu 0" /></div>
+            </td>
+            <td>
+              <input type="text" class="q6-input" data-q="0" value="This pizza is great." disabled />
+            </td>
+          </tr>
+          <tr>
+            <td>1</td>
+            <td>
+              <div class="q4-image-frame"><img src="https://cdn-images.ipage.ai/images/cute-food-cute-ice-cream-cone.jpg" alt="Câu 1" /></div>
+            </td>
+            <td>
+              <input type="text" class="q6-input" data-q="1" placeholder="Would you like some ...?" autocomplete="off" />
+            </td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>
+              <div class="q4-image-frame"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1F89BNjD6KSwqV3S8f5tBuO-0fx56G5x1Fw&s" alt="Câu 2" /></div>
+            </td>
+            <td>
+              <input type="text" class="q6-input" data-q="2" placeholder="My favorite food is ..." autocomplete="off" />
+            </td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>
+              <div class="q4-image-frame"><img src="https://anhtomau.com/wp-content/uploads/2025/11/Tranh-Cupcake-ngo-nghinh-cho-be.webp" alt="Câu 3" /></div>
+            </td>
+            <td>
+              <input type="text" class="q6-input" data-q="3" placeholder="There are nine ...?" autocomplete="off" />
+            </td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>
+              <div class="q4-image-frame"><img src="https://png.pngtree.com/element_our/20190530/ourmid/pngtree-hand-drawn-chopsticks-illustration-image_1240409.jpg" alt="Câu 4" /></div>
+            </td>
+            <td>
+              <input type="text" class="q6-input" data-q="4" placeholder="We eat noodles with ..." autocomplete="off" />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="toolbar">
+        <button type="button" class="success" id="btnCheckQ6">Kiểm tra Question 6</button>
+      </div>
+
+      <div id="q6Result" class="match-result" role="status" aria-live="polite"></div>
+    </section>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var matchArea = document.getElementById("matchArea");
+      var svg = document.getElementById("lineLayer");
+
+      /** @type {{ imageId: string, wordId: string }[]} */
+      var pairs = [];
+      /** @type {HTMLElement | null} */
+      var selectedEl = null;
+      var matchResult = document.getElementById("matchResult");
+
+      /** Đáp án: 1-A, 2-D, 3-E, 4-C, 5-B */
+      var ANSWER_KEY = {
+        "1": "a",
+        "2": "d",
+        "3": "e",
+        "4": "c",
+        "5": "b",
+      };
+
+      var IMAGE_IDS = ["1", "2", "3", "4", "5"];
+
+      function wordIdToLetter(wid) {
+        return wid ? String(wid).toUpperCase() : "?";
+      }
+
+      function hideMatchResult() {
+        matchResult.classList.remove("is-visible", "is-error", "is-success");
+        matchResult.innerHTML = "";
+      }
+
+      function showWrongNoti(lines) {
+        matchResult.classList.remove("is-success");
+        matchResult.classList.add("is-visible", "is-error");
+        var html = "<h4>Chưa đúng — các câu cần xem lại:</h4><ul>";
+        lines.forEach(function (line) {
+          html += "<li>" + line + "</li>";
+        });
+        html += "</ul>";
+        matchResult.innerHTML = html;
+      }
+
+      function showSuccessNoti() {
+        matchResult.classList.remove("is-error");
+        matchResult.classList.add("is-visible", "is-success");
+        matchResult.innerHTML = "<h4>Chính xác!</h4><p>Bạn đã nối đúng tất cả.</p>";
+      }
+
+      function launchFireworks() {
+        var old = document.getElementById("fireworksCanvas");
+        if (old) old.remove();
+
+        var canvas = document.createElement("canvas");
+        canvas.id = "fireworksCanvas";
+        var W = window.innerWidth;
+        var H = window.innerHeight;
+        canvas.width = W;
+        canvas.height = H;
+        document.body.appendChild(canvas);
+
+        var ctx = canvas.getContext("2d");
+        if (!ctx) return;
+
+        var particles = [];
+
+        function spawn(px, py, count) {
+          for (var i = 0; i < count; i++) {
+            var ang = Math.random() * Math.PI * 2;
+            var sp = 1.5 + Math.random() * 5.5;
+            particles.push({
+              x: px,
+              y: py,
+              vx: Math.cos(ang) * sp,
+              vy: Math.sin(ang) * sp - 1.5,
+              life: 1 + Math.random() * 0.5,
+              hue: Math.floor(Math.random() * 360),
+            });
+          }
+        }
+
+        for (var b = 0; b < 12; b++) {
+          spawn(Math.random() * W * 0.85 + W * 0.075, Math.random() * H * 0.55 + H * 0.08, 55);
+        }
+
+        var start = performance.now();
+        var duration = 3200;
+
+        function tick(now) {
+          var elapsed = now - start;
+          ctx.fillStyle = "rgba(15, 23, 42, 0.2)";
+          ctx.fillRect(0, 0, W, H);
+
+          for (var i = particles.length - 1; i >= 0; i--) {
+            var p = particles[i];
+            p.vy += 0.08;
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vx *= 0.995;
+            p.life -= 0.012;
+
+            if (p.life <= 0 || p.y > H + 30) {
+              particles.splice(i, 1);
+              continue;
+            }
+
+            ctx.globalAlpha = Math.min(1, p.life);
+            ctx.fillStyle = "hsl(" + p.hue + ", 90%, 58%)";
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 2.8, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.globalAlpha = 1;
+
+          if (elapsed < duration || particles.length > 0) {
+            requestAnimationFrame(tick);
+          } else {
+            canvas.remove();
+          }
+        }
+
+        requestAnimationFrame(tick);
+      }
+
+      function currentPairMap() {
+        var map = {};
+        pairs.forEach(function (p) {
+          map[p.imageId] = p.wordId;
+        });
+        return map;
+      }
+
+      function validatePairs() {
+        var expected = ANSWER_KEY;
+        var map = currentPairMap();
+        var wrong = [];
+
+        IMAGE_IDS.forEach(function (imgId) {
+          var exp = expected[imgId];
+          var got = map[imgId];
+          if (!got) {
+            wrong.push("Hình " + imgId + ": chưa nối.");
+            return;
+          }
+          if (got !== exp) {
+            wrong.push(
+              "Hình " +
+                imgId +
+                ": bạn nối " +
+                wordIdToLetter(got) +
+                ", đáp án đúng là " +
+                wordIdToLetter(exp) +
+                "."
+            );
+          }
+        });
+
+        return wrong;
+      }
+
+      function centerInArea(el) {
+        var r = el.getBoundingClientRect();
+        var a = matchArea.getBoundingClientRect();
+        return {
+          x: r.left - a.left + r.width / 2,
+          y: r.top - a.top + r.height / 2,
+        };
+      }
+
+      function clearSelectionClass() {
+        matchArea.querySelectorAll(".selected").forEach(function (n) {
+          n.classList.remove("selected");
+        });
+        selectedEl = null;
+      }
+
+      function setSelected(el) {
+        clearSelectionClass();
+        selectedEl = el;
+        el.classList.add("selected");
+      }
+
+      function redrawLines() {
+        while (svg.firstChild) svg.removeChild(svg.firstChild);
+        var w = matchArea.offsetWidth;
+        var h = matchArea.offsetHeight;
+        svg.setAttribute("width", String(w));
+        svg.setAttribute("height", String(h));
+        svg.setAttribute("viewBox", "0 0 " + w + " " + h);
+
+        pairs.forEach(function (p) {
+          var imgEl = matchArea.querySelector('.image-slot[data-id="' + p.imageId + '"]');
+          var wordEl = matchArea.querySelector('.word-btn[data-id="' + p.wordId + '"]');
+          if (!imgEl || !wordEl) return;
+          var c1 = centerInArea(imgEl);
+          var c2 = centerInArea(wordEl);
+          var line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+          line.setAttribute("x1", String(c1.x));
+          line.setAttribute("y1", String(c1.y));
+          line.setAttribute("x2", String(c2.x));
+          line.setAttribute("y2", String(c2.y));
+          line.setAttribute("stroke", "#2563eb");
+          line.setAttribute("stroke-width", "3");
+          line.setAttribute("stroke-linecap", "round");
+          line.setAttribute("opacity", "0.9");
+          svg.appendChild(line);
+        });
+      }
+
+      function removePairConflicts(imageId, wordId) {
+        pairs = pairs.filter(function (pair) {
+          if (pair.imageId === imageId && pair.wordId === wordId) return false;
+          if (pair.imageId === imageId) return false;
+          if (pair.wordId === wordId) return false;
+          return true;
+        });
+      }
+
+      function onPick(el) {
+        var kind = el.getAttribute("data-kind");
+        var id = el.getAttribute("data-id");
+        if (!kind || !id) return;
+
+        if (!selectedEl) {
+          setSelected(el);
+          hideMatchResult();
+          return;
+        }
+
+        var sk = selectedEl.getAttribute("data-kind");
+        var sid = selectedEl.getAttribute("data-id");
+        if (selectedEl === el) {
+          clearSelectionClass();
+          return;
+        }
+
+        if (sk === kind) {
+          setSelected(el);
+          return;
+        }
+
+        var imageId, wordId;
+        if (sk === "image" && kind === "word") {
+          imageId = sid;
+          wordId = id;
+        } else if (sk === "word" && kind === "image") {
+          imageId = id;
+          wordId = sid;
+        } else {
+          setSelected(el);
+          return;
+        }
+
+        removePairConflicts(imageId, wordId);
+        pairs.push({ imageId: imageId, wordId: wordId });
+        clearSelectionClass();
+        hideMatchResult();
+        redrawLines();
+      }
+
+      matchArea.addEventListener("click", function (e) {
+        var t = /** @type {HTMLElement} */ (e.target);
+        var slot = t.closest(".image-slot");
+        var word = t.closest(".word-btn");
+        var el = slot || word;
+        if (!el || !matchArea.contains(el)) return;
+        onPick(el);
+      });
+
+      matchArea.addEventListener("keydown", function (e) {
+        if (e.key !== "Enter" && e.key !== " ") return;
+        var t = /** @type {HTMLElement} */ (e.target);
+        if (!t.classList.contains("image-slot")) return;
+        e.preventDefault();
+        onPick(t);
+      });
+
+      document.getElementById("btnClear").addEventListener("click", function () {
+        pairs = [];
+        clearSelectionClass();
+        hideMatchResult();
+        redrawLines();
+      });
+
+      document.getElementById("btnCheck").addEventListener("click", function () {
+        var wrong = validatePairs();
+        if (wrong.length === 0) {
+          hideMatchResult();
+          showSuccessNoti();
+          launchFireworks();
+        } else {
+          showWrongNoti(wrong);
+        }
+      });
+
+      document.getElementById("btnRedraw").addEventListener("click", redrawLines);
+
+      window.addEventListener("resize", function () {
+        requestAnimationFrame(redrawLines);
+      });
+
+      if ("ResizeObserver" in window) {
+        new ResizeObserver(function () {
+          requestAnimationFrame(redrawLines);
+        }).observe(matchArea);
+      }
+
+      /* ----- Question 2 (câu 0–3) ----- */
+      var q2Block = document.getElementById("q2Block");
+      var q2Result = document.getElementById("q2Result");
+
+      /** Đáp án: 0-C, 1-A, 2-A, 3-B */
+      var Q2_ANSWER = {
+        "0": "c",
+        "1": "a",
+        "2": "a",
+        "3": "b",
+      };
+
+      var Q2_IDS = ["0", "1", "2", "3"];
+
+      var q2Picked = { "0": null, "1": null, "2": null, "3": null };
+
+      function hideQ2Result() {
+        q2Result.classList.remove("is-visible", "is-error", "is-success");
+        q2Result.innerHTML = "";
+      }
+
+      function showQ2Wrong(lines) {
+        q2Result.classList.remove("is-success");
+        q2Result.classList.add("is-visible", "is-error");
+        var html = "<h4>Chưa đúng — các câu cần xem lại:</h4><ul>";
+        lines.forEach(function (line) {
+          html += "<li>" + line + "</li>";
+        });
+        html += "</ul>";
+        q2Result.innerHTML = html;
+      }
+
+      function showQ2Success() {
+        q2Result.classList.remove("is-error");
+        q2Result.classList.add("is-visible", "is-success");
+        q2Result.innerHTML = "<h4>Chính xác!</h4><p>Bạn đã chọn đúng cả 4 câu.</p>";
+      }
+
+      function validateQ2() {
+        var wrong = [];
+        Q2_IDS.forEach(function (qid) {
+          var exp = Q2_ANSWER[qid];
+          var got = q2Picked[qid];
+          if (!got) {
+            wrong.push("Câu " + qid + ": chưa chọn đáp án.");
+            return;
+          }
+          if (got !== exp) {
+            wrong.push(
+              "Câu " +
+                qid +
+                ": bạn chọn " +
+                wordIdToLetter(got) +
+                ", đáp án đúng là " +
+                wordIdToLetter(exp) +
+                "."
+            );
+          }
+        });
+        return wrong;
+      }
+
+      q2Block.addEventListener("click", function (e) {
+        var t = e.target && /** @type {HTMLElement} */ (e.target).closest(".q2-opt");
+        if (!t || !q2Block.contains(t)) return;
+        var q = t.getAttribute("data-q");
+        var choice = t.getAttribute("data-choice");
+        if (q == null || choice == null) return;
+
+        q2Picked[q] = choice;
+        hideQ2Result();
+
+        var group = t.closest(".q2-options");
+        if (group) {
+          group.querySelectorAll(".q2-opt").forEach(function (btn) {
+            btn.classList.remove("is-picked");
+          });
+        }
+        t.classList.add("is-picked");
+      });
+
+      document.getElementById("btnCheckQ2").addEventListener("click", function () {
+        var wrong = validateQ2();
+        if (wrong.length === 0) {
+          hideQ2Result();
+          showQ2Success();
+          launchFireworks();
+        } else {
+          showQ2Wrong(wrong);
+        }
+      });
+
+      var q3Block = document.getElementById("q3Block");
+      var q3Result = document.getElementById("q3Result");
+
+      var Q3_ANSWER = {
+        "0": "yes",
+        "1": "no",
+        "2": "no",
+        "3": "yes",
+        "4": "yes",
+      };
+
+      var Q3_IDS = ["0", "1", "2", "3", "4"];
+
+      var q3Picked = { "0": null, "1": null, "2": null, "3": null, "4": null };
+
+      function hideQ3Result() {
+        q3Result.classList.remove("is-visible", "is-error", "is-success");
+        q3Result.innerHTML = "";
+      }
+
+      function showQ3Wrong(lines) {
+        q3Result.classList.remove("is-success");
+        q3Result.classList.add("is-visible", "is-error");
+        var html = "<h4>Chưa đúng — các câu cần xem lại:</h4><ul>";
+        lines.forEach(function (line) {
+          html += "<li>" + line + "</li>";
+        });
+        html += "</ul>";
+        q3Result.innerHTML = html;
+      }
+
+      function showQ3Success() {
+        q3Result.classList.remove("is-error");
+        q3Result.classList.add("is-visible", "is-success");
+        q3Result.innerHTML = "<h4>Chính xác!</h4><p>Bạn đã chọn đúng cả 5 câu.</p>";
+      }
+
+      function validateQ3() {
+        var wrong = [];
+        Q3_IDS.forEach(function (qid) {
+          var got = q3Picked[qid];
+          var exp = Q3_ANSWER[qid];
+          if (!got) {
+            wrong.push("Câu " + qid + ": chưa chọn đáp án.");
+            return;
+          }
+          if (got !== exp) {
+            wrong.push("Câu " + qid + ": bạn chọn " + got.toUpperCase() + ", đáp án đúng là " + exp.toUpperCase() + ".");
+          }
+        });
+        return wrong;
+      }
+
+      q3Block.addEventListener("click", function (e) {
+        var t = e.target && /** @type {HTMLElement} */ (e.target).closest(".q3-opt");
+        if (!t || !q3Block.contains(t)) return;
+        var q = t.getAttribute("data-q");
+        var answer = t.getAttribute("data-answer");
+        if (q == null || answer == null) return;
+
+        q3Picked[q] = answer;
+        hideQ3Result();
+
+        var group = t.closest(".q3-options");
+        if (group) {
+          group.querySelectorAll(".q3-opt").forEach(function (btn) {
+            btn.classList.remove("is-picked");
+          });
+        }
+        t.classList.add("is-picked");
+      });
+
+      document.getElementById("btnCheckQ3").addEventListener("click", function () {
+        var wrong = validateQ3();
+        if (wrong.length === 0) {
+          hideQ3Result();
+          showQ3Success();
+          launchFireworks();
+        } else {
+          showQ3Wrong(wrong);
+        }
+      });
+
+      var q4Block = document.getElementById("q4Block");
+      var q4Result = document.getElementById("q4Result");
+
+      var Q4_ANSWER = {
+        "0": "onion",
+        "1": "chicken",
+        "2": "boots",
+        "3": "fries",
+      };
+
+      var Q4_IDS = ["0", "1", "2", "3"];
+
+      function hideQ4Result() {
+        q4Result.classList.remove("is-visible", "is-error", "is-success");
+        q4Result.innerHTML = "";
+      }
+
+      function showQ4Wrong(lines) {
+        q4Result.classList.remove("is-success");
+        q4Result.classList.add("is-visible", "is-error");
+        var html = "<h4>Chưa đúng — các câu cần xem lại:</h4><ul>";
+        lines.forEach(function (line) {
+          html += "<li>" + line + "</li>";
+        });
+        html += "</ul>";
+        q4Result.innerHTML = html;
+      }
+
+      function showQ4Success() {
+        q4Result.classList.remove("is-error");
+        q4Result.classList.add("is-visible", "is-success");
+        q4Result.innerHTML = "<h4>Chính xác!</h4><p>Bạn đã điền đúng cả 4 câu.</p>";
+      }
+
+      function validateQ4() {
+        var wrong = [];
+        Q4_IDS.forEach(function (qid) {
+          var input = q4Block.querySelector('.q4-input[data-q="' + qid + '"]');
+          var got = input ? input.value.trim().toLowerCase() : "";
+          var exp = Q4_ANSWER[qid];
+          if (!got) {
+            wrong.push("Câu " + qid + ": chưa điền đáp án.");
+            return;
+          }
+          if (got !== exp) {
+            wrong.push("Câu " + qid + ": bạn điền '" + got + "', đáp án đúng là '" + exp + "'.");
+          }
+        });
+        return wrong;
+      }
+
+      document.getElementById("btnCheckQ4").addEventListener("click", function () {
+        var wrong = validateQ4();
+        if (wrong.length === 0) {
+          hideQ4Result();
+          showQ4Success();
+          launchFireworks();
+        } else {
+          showQ4Wrong(wrong);
+        }
+      });
+
+      var q5Block = document.getElementById("q5Block");
+      var q5Result = document.getElementById("q5Result");
+
+      var Q5_ANSWER = {
+        "0": "I want a shirt.",
+        "1": "Put the car under the table.",
+        "2": "Are there any potatoes?",
+      };
+
+      var Q5_IDS = ["0", "1", "2"];
+
+      function normalizeSentence(value) {
+        return value
+          .trim()
+          .toLowerCase()
+          .replace(/[\.\?\!]+$/, "")
+          .replace(/\s+/g, " ");
+      }
+
+      function hideQ5Result() {
+        q5Result.classList.remove("is-visible", "is-error", "is-success");
+        q5Result.innerHTML = "";
+      }
+
+      function showQ5Wrong(lines) {
+        q5Result.classList.remove("is-success");
+        q5Result.classList.add("is-visible", "is-error");
+        var html = "<h4>Chưa đúng — các câu cần xem lại:</h4><ul>";
+        lines.forEach(function (line) {
+          html += "<li>" + line + "</li>";
+        });
+        html += "</ul>";
+        q5Result.innerHTML = html;
+      }
+
+      function showQ5Success() {
+        q5Result.classList.remove("is-error");
+        q5Result.classList.add("is-visible", "is-success");
+        q5Result.innerHTML = "<h4>Chính xác!</h4><p>Bạn đã viết đúng tất cả các câu.</p>";
+      }
+
+      function validateQ5() {
+        var wrong = [];
+        Q5_IDS.forEach(function (qid) {
+          var input = q5Block.querySelector('.q5-input[data-q="' + qid + '"]');
+          var got = input ? normalizeSentence(input.value) : "";
+          var exp = normalizeSentence(Q5_ANSWER[qid]);
+          if (!got) {
+            wrong.push("Câu " + qid + ": chưa điền đáp án.");
+            return;
+          }
+          if (got !== exp) {
+            wrong.push(
+              "Câu " + qid + ": bạn điền '" + input.value.trim() + "', đáp án đúng là '" + Q5_ANSWER[qid] + "'."
+            );
+          }
+        });
+        return wrong;
+      }
+
+      document.getElementById("btnCheckQ5").addEventListener("click", function () {
+        var wrong = validateQ5();
+        if (wrong.length === 0) {
+          hideQ5Result();
+          showQ5Success();
+          launchFireworks();
+        } else {
+          showQ5Wrong(wrong);
+        }
+      });
+
+      var q6Block = document.getElementById("q6Block");
+      var q6Result = document.getElementById("q6Result");
+
+      var Q6_ANSWER = {
+        "0": "this pizza is great",
+        "1": "ice cream",
+        "2": "noodles",
+        "3": "cupcakes",
+        "4": "chopsticks",
+      };
+
+      var Q6_IDS = ["0", "1", "2", "3", "4"];
+
+      function hideQ6Result() {
+        q6Result.classList.remove("is-visible", "is-error", "is-success");
+        q6Result.innerHTML = "";
+      }
+
+      function showQ6Wrong(lines) {
+        q6Result.classList.remove("is-success");
+        q6Result.classList.add("is-visible", "is-error");
+        var html = "<h4>Chưa đúng — các câu cần xem lại:</h4><ul>";
+        lines.forEach(function (line) {
+          html += "<li>" + line + "</li>";
+        });
+        html += "</ul>";
+        q6Result.innerHTML = html;
+      }
+
+      function showQ6Success() {
+        q6Result.classList.remove("is-error");
+        q6Result.classList.add("is-visible", "is-success");
+        q6Result.innerHTML = "<h4>Chính xác!</h4><p>Bạn đã hoàn thành đúng tất cả câu hỏi.</p>";
+      }
+
+      function validateQ6() {
+        var wrong = [];
+        Q6_IDS.forEach(function (qid) {
+          var input = q6Block.querySelector('.q6-input[data-q="' + qid + '"]');
+          var got = input ? input.value.trim().toLowerCase().replace(/[\.\?\!]+$/, "") : "";
+          var exp = Q6_ANSWER[qid];
+          if (!got) {
+            wrong.push("Câu " + qid + ": chưa điền đáp án.");
+            return;
+          }
+          if (got !== exp) {
+            wrong.push("Câu " + qid + ": bạn điền '" + (input ? input.value.trim() : "") + "', đáp án đúng là '" + exp + "'.");
+          }
+        });
+        return wrong;
+      }
+
+      document.getElementById("btnCheckQ6").addEventListener("click", function () {
+        var wrong = validateQ6();
+        if (wrong.length === 0) {
+          hideQ6Result();
+          showQ6Success();
+          launchFireworks();
+        } else {
+          showQ6Wrong(wrong);
+        }
+      });
+
+      redrawLines();
+    })();
+  </script>
+</body>
+</html>
+
