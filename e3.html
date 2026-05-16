@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Bài tập tiếng Anh - Tích chọn</title>
+    <style>
+      :root {
+        --correct: #16a34a;
+        --wrong: #dc2626;
+        --accent: #2563eb;
+      }
+      body {
+        font-family: Inter, Arial, sans-serif;
+        background: #f7fafc;
+        color: #111;
+        margin: 0;
+        padding: 24px;
+      }
+      .container {
+        max-width: 760px;
+        margin: 18px auto;
+        background: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 6px 18px rgba(16, 24, 40, 0.06);
+      }
+      h1 {
+        font-size: 20px;
+        margin: 0 0 10px;
+      }
+      p.passage {
+        background: #f1f5f9;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+      }
+      .question {
+        margin-top: 16px;
+      }
+      .q {
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid #e6edf8;
+        background: #fff;
+        margin-bottom: 8px;
+      }
+      .q h4 {
+        margin: 0 0 8px;
+        font-size: 15px;
+      }
+      .options {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      label.option {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 10px;
+        border-radius: 8px;
+        border: 1px solid transparent;
+        cursor: pointer;
+        user-select: none;
+      }
+      label.option input {
+        accent-color: var(--accent);
+      }
+      label.option.correct {
+        background: rgba(22, 163, 74, 0.08);
+        border-color: rgba(22, 163, 74, 0.16);
+      }
+      label.option.wrong {
+        background: rgba(220, 38, 38, 0.06);
+        border-color: rgba(220, 38, 38, 0.12);
+      }
+      .controls {
+        display: flex;
+        gap: 10px;
+        margin-top: 12px;
+      }
+      button {
+        padding: 8px 12px;
+        border-radius: 8px;
+        border: 0;
+        background: var(--accent);
+        color: #fff;
+        cursor: pointer;
+      }
+      button.secondary {
+        background: #94a3b8;
+      }
+      .result {
+        margin-top: 12px;
+        font-weight: 600;
+      }
+      .note {
+        font-size: 13px;
+        color: #475569;
+        margin-top: 8px;
+      }
+
+      .yesno-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.yesno-table th,
+.yesno-table td {
+  border: 1px solid #ccc;
+  padding: 10px;
+  text-align: center;
+}
+
+.yesno-table th:first-child,
+.yesno-table td:first-child {
+  text-align: left;
+}
+
+.yesno-table input {
+  transform: scale(1.2);
+  cursor: pointer;
+}
+
+.correct-row {
+  background: rgba(22, 163, 74, 0.1);
+}
+
+.wrong-row {
+  background: rgba(220, 38, 38, 0.1);
+}
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Bài đọc và câu hỏi (Tích chọn)</h1>
+
+      <p class="passage">
+        My name is Daniel. I'm from the USA. In my house, we often eat pizza. My
+        father likes chicken. My mother likes fish. My favourite food is steak.
+        We eat with a knife and a fork. We eat some dishes with a spoon.
+      </p>
+
+      <div class="question">
+  <table class="yesno-table">
+    <thead>
+      <tr>
+        <th>Câu hỏi</th>
+        <th>Yes</th>
+        <th>No</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="q" data-answer="yes">
+        <td>1. Daniel is from the USA.</td>
+        <td><input type="radio" name="q1" value="yes"></td>
+        <td><input type="radio" name="q1" value="no"></td>
+      </tr>
+
+      <tr class="q" data-answer="yes">
+        <td>2. They often eat pizza.</td>
+        <td><input type="radio" name="q2" value="yes"></td>
+        <td><input type="radio" name="q2" value="no"></td>
+      </tr>
+
+      <tr class="q" data-answer="yes">
+        <td>3. His father likes chicken.</td>
+        <td><input type="radio" name="q3" value="yes"></td>
+        <td><input type="radio" name="q3" value="no"></td>
+      </tr>
+
+      <tr class="q" data-answer="yes">
+        <td>4. His favourite food is steak.</td>
+        <td><input type="radio" name="q4" value="yes"></td>
+        <td><input type="radio" name="q4" value="no"></td>
+      </tr>
+
+      <tr class="q" data-answer="no">
+        <td>5. His mother likes chicken.</td>
+        <td><input type="radio" name="q5" value="yes"></td>
+        <td><input type="radio" name="q5" value="no"></td>
+      </tr>
+
+      <tr class="q" data-answer="no">
+        <td>6. His mother doesn't like fish.</td>
+        <td><input type="radio" name="q6" value="yes"></td>
+        <td><input type="radio" name="q6" value="no"></td>
+      </tr>
+
+      <tr class="q" data-answer="no">
+        <td>7. His favourite food is chicken.</td>
+        <td><input type="radio" name="q7" value="yes"></td>
+        <td><input type="radio" name="q7" value="no"></td>
+      </tr>
+
+      <tr class="q" data-answer="no">
+        <td>8. They eat with a knife and a fork.</td>
+        <td><input type="radio" name="q8" value="yes"></td>
+        <td><input type="radio" name="q8" value="no"></td>
+      </tr>
+
+      <tr class="q" data-answer="no">
+        <td>9. He and his family often eat pizza.</td>
+        <td><input type="radio" name="q9" value="yes"></td>
+        <td><input type="radio" name="q9" value="no"></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+    <script>
+      function checkAnswers() {
+        const qs = Array.from(document.querySelectorAll(".q"));
+        let correct = 0;
+        qs.forEach((q, idx) => {
+          const correctAns = q.getAttribute("data-answer");
+          const name = "q" + (idx + 1);
+          const selected = q.querySelector(
+            'input[name="' + name + '"]:checked',
+          );
+
+          // clear previous markers
+          q.querySelectorAll(".option").forEach((opt) =>
+            opt.classList.remove("correct", "wrong"),
+          );
+
+          if (selected) {
+            if (selected.value === correctAns) {
+              // mark the chosen label correct
+              const label = selected.closest("label");
+              label.classList.add("correct");
+              correct++;
+            } else {
+              // mark chosen as wrong
+              const chosen = selected.closest("label");
+              chosen.classList.add("wrong");
+              // highlight the right one
+              const right = q.querySelector(
+                'input[value="' + correctAns + '"]',
+              );
+              if (right) right.closest("label").classList.add("correct");
+            }
+          } else {
+            // no selection -> highlight correct
+            const right = q.querySelector('input[value="' + correctAns + '"]');
+            if (right) right.closest("label").classList.add("correct");
+          }
+        });
+
+        const scoreEl = document.getElementById("score");
+        scoreEl.textContent = `Score: ${correct} / ${qs.length}`;
+      }
+
+      function resetAll() {
+        // clear radios
+        const radios = document.querySelectorAll("input[type=radio]");
+        radios.forEach((r) => (r.checked = false));
+        // clear classes and score
+        document
+          .querySelectorAll(".option")
+          .forEach((opt) => opt.classList.remove("correct", "wrong"));
+        document.getElementById("score").textContent = "";
+      }
+
+      document
+        .getElementById("checkBtn")
+        .addEventListener("click", checkAnswers);
+      document.getElementById("resetBtn").addEventListener("click", resetAll);
+    </script>
+  </body>
+</html>
