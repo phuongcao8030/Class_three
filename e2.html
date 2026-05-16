@@ -1,0 +1,343 @@
+```html
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Match nối cặp</title>
+
+    <style>
+      body {
+        font-family: Arial;
+        padding: 30px;
+      }
+
+      .match-container {
+        position: relative;
+        display: flex;
+        justify-content: space-between;
+        padding: 20px;
+        border: 1px solid #ccc;
+        width: 600px;
+      }
+
+      .col {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .match-item {
+        padding: 8px 12px;
+        background: #f2f2f2;
+        border-radius: 6px;
+        cursor: pointer;
+        user-select: none;
+        transition: 0.2s;
+      }
+
+      .match-item:hover {
+        background: #ddd;
+      }
+
+      .selected {
+        background: orange;
+        color: #fff;
+      }
+
+      /* line */
+      .line {
+        position: absolute;
+        height: 2px;
+        background: red;
+        transform-origin: 0 0;
+        pointer-events: none;
+      }
+
+      .sub-question {
+        margin-top: 15px;
+      }
+
+      .choice {
+        display: block;
+        margin: 6px 0;
+        padding: 6px 10px;
+        border: 2px solid #000;
+        border-radius: 10px;
+        cursor: pointer;
+        width: fit-content;
+        background: #fff;
+      }
+
+      .choice input {
+        margin-right: 8px;
+      }
+
+      .rewrite {
+        margin-top: 15px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .rewrite-item {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+
+      .rewrite-item span {
+        font-weight: bold;
+      }
+
+      .rewrite-item input {
+        padding: 8px 10px;
+        border: 2px solid #000;
+        border-radius: 8px;
+        outline: none;
+        font-size: 14px;
+      }
+
+      .rewrite-item input:focus {
+        border-color: #2563eb;
+      }
+
+      .fill {
+        margin-top: 15px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .fill-item {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+
+      .fill-item span {
+        font-weight: bold;
+      }
+
+      .fill-item input {
+        width: 200px;
+        padding: 6px 10px;
+        border: none;
+        border-bottom: 2px solid #000;
+        outline: none;
+        font-size: 14px;
+        background: transparent;
+      }
+
+      .fill-item input:focus {
+        border-bottom: 2px solid #2563eb;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h3>I. Đọc và nối</h3>
+
+    <div id="match-container" class="match-container">
+      <!-- Cột trái -->
+      <div class="col">
+        <span class="match-item">18</span>
+        <span class="match-item">bánh nướng</span>
+        <span class="match-item">thịt gà</span>
+        <span class="match-item">nhỏ</span>
+      </div>
+
+      <!-- Cột phải -->
+      <div class="col">
+        <span class="match-item">chicken</span>
+        <span class="match-item">eighteen</span>
+        <span class="match-item">small</span>
+        <span class="match-item">cupcake</span>
+      </div>
+    </div>
+    <div class="question">
+      <p><b>II. Đọc và nói</b></p>
+
+      <!-- Câu 1 -->
+      <div class="sub-question">
+        <p><b>1. bánh nướng</b></p>
+
+        <label class="choice">
+          <input type="checkbox" name="q7" />
+          A. There is a cake
+        </label>
+
+        <label class="choice">
+          <input type="checkbox" name="q7" />
+          B. There is a cupcake
+        </label>
+
+        <label class="choice">
+          <input type="checkbox" name="q7" />
+          C. There is a donut
+        </label>
+
+        <label class="choice">
+          <input type="checkbox" name="q7" />
+          D. There is a carrot
+        </label>
+      </div>
+
+      <!-- Câu 2 -->
+      <div class="sub-question">
+        <p><b>2. Trái banh để trong thùng đồ chơi</b></p>
+
+        <label class="choice">
+          <input type="checkbox" name="q8" />
+          A. Put the ball in the chair
+        </label>
+
+        <label class="choice">
+          <input type="checkbox" name="q8" />
+          B. Put the ball on the chair
+        </label>
+
+        <label class="choice">
+          <input type="checkbox" name="q8" />
+          C. Put the ball under the chair
+        </label>
+        <label class="choice">
+          <input type="checkbox" name="q8" />
+          D. Put the ball in the toy box
+        </label>
+      </div>
+
+      <!-- Câu 3 -->
+      <div class="sub-question">
+        <p><b>3. Kem</b></p>
+
+        <label class="choice">
+          <input type="checkbox" name="q8" />
+          A. Would you like some ice cream?
+        </label>
+
+        <label class="choice">
+          <input type="checkbox" name="q8" />
+          B. Would you like some cupcake?
+        </label>
+
+        <label class="choice">
+          <input type="checkbox" name="q8" />
+          C. Would you like some fries?
+        </label>
+        <label class="choice">
+          <input type="checkbox" name="q8" />
+          D. Would you like some apple?
+        </label>
+      </div>
+    </div>
+
+    <div class="question">
+      <p><b>IV. Viết lại từ tiếng anh sau cho đúng</b></p>
+
+      <div class="rewrite">
+        <div class="rewrite-item">
+          <span>1. entytw</span>
+          <input type="text" placeholder="Nhập từ đúng..." />
+        </div>
+
+        <div class="rewrite-item">
+          <span>2. rrotca</span>
+          <input type="text" placeholder="Nhập từ đúng..." />
+        </div>
+
+        <div class="rewrite-item">
+          <span>3. matoto</span>
+          <input type="text" placeholder="Nhập từ đúng..." />
+        </div>
+      </div>
+    </div>
+    <div class="question">
+      <p><b>V. Sắp xếp câu</b></p>
+
+      <div class="rewrite">
+        <div class="rewrite-item">
+          <span>1. you / can / What / see ?</span>
+          <input type="text" placeholder="Viết lại câu đúng..." />
+        </div>
+
+        <div class="rewrite-item">
+          <span>2. many / How / marbles / you / do / have ?</span>
+          <input type="text" placeholder="Viết lại câu đúng..." />
+        </div>
+      </div>
+    </div>
+
+    <div class="question">
+      <p><b>VI. Viết câu</b></p>
+
+      <div class="fill">
+        <div class="fill-item">
+          <span>1. My favourite food is ______.</span>
+          <input type="text" placeholder="Điền từ..." />
+        </div>
+
+        <div class="fill-item">
+          <span>2. We eat ______ with chopsticks.</span>
+          <input type="text" placeholder="Điền từ..." />
+        </div>
+
+        <div class="fill-item">
+          <span>3. What do you want? I want a ______.</span>
+          <input type="text" placeholder="Điền từ..." />
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const container = document.getElementById("match-container");
+      const items = document.querySelectorAll(".match-item");
+
+      let first = null;
+
+      items.forEach((item) => {
+        item.addEventListener("click", () => {
+          if (!first) {
+            first = item;
+            item.classList.add("selected");
+            return;
+          }
+
+          if (first === item) return;
+
+          drawLine(first, item);
+
+          first.classList.remove("selected");
+          first = null;
+        });
+      });
+
+      function drawLine(el1, el2) {
+        const rect1 = el1.getBoundingClientRect();
+        const rect2 = el2.getBoundingClientRect();
+        const parentRect = container.getBoundingClientRect();
+
+        const x1 = rect1.right - parentRect.left;
+        const y1 = rect1.top + rect1.height / 2 - parentRect.top;
+
+        const x2 = rect2.left - parentRect.left;
+        const y2 = rect2.top + rect2.height / 2 - parentRect.top;
+
+        const dx = x2 - x1;
+        const dy = y2 - y1;
+
+        const length = Math.sqrt(dx * dx + dy * dy);
+        const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+
+        const line = document.createElement("div");
+        line.className = "line";
+
+        line.style.width = length + "px";
+        line.style.left = x1 + "px";
+        line.style.top = y1 + "px";
+        line.style.transform = `rotate(${angle}deg)`;
+
+        container.appendChild(line);
+      }
+    </script>
+  </body>
+</html>
